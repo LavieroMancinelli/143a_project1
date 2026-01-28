@@ -1,6 +1,6 @@
 ### Fill in the following information before submitting
-# Group id: 
-# Members: 
+# Group id: 27
+# Members: Luke Li	lukel6@uci.edu	Jonathan Tran	jonatyt1@uci.edu	Laviero Mancinelli	lmancine@uci.edu
 
 from collections import deque
 
@@ -41,11 +41,15 @@ class Kernel:
     # new_process is this process's PID.
     # DO NOT rename or delete this method. DO NOT change its arguments.
     def new_process_arrived(self, new_process: PID) -> PID:
+        self.ready_queue.append(PCB(new_process))
+        if self.running.pid == 0:
+            self.running = self.ready_queue.popleft()
         return self.running.pid
 
     # This method is triggered every time the current process performs an exit syscall.
     # DO NOT rename or delete this method. DO NOT change its arguments.
     def syscall_exit(self) -> PID:
+        self.running = self.choose_next_process()
         return self.running.pid
     
 
@@ -55,11 +59,13 @@ class Kernel:
     # It is not required to actually use this method but it is recommended.
     def choose_next_process(self):
         if len(self.ready_queue) == 0:
-                return self.idle_pcb
-        
-        if self.scheduling_algorithm == "FCFS":
-            self.running = self.idle_pcb
+            return self.idle_pcb
         else:
-            print("Unknown scheduling algorithm")
+            return self.ready_queue.popleft()
+        
+        # if self.scheduling_algorithm == "FCFS":
+        #     self.running = self.idle_pcb        # why would we want to set running to the idle process if the scheduling alg is FCFS?
+        # else:
+        #     print("Unknown scheduling algorithm")
         
 
